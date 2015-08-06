@@ -163,6 +163,12 @@ var browserSync = require('browser-sync'),
 					$.util.log('Rebundle', $.util.colors.cyan('\'js\''), 'in', $.util.colors.magenta(Math.round(time / 10) / 100 + ' s'));
 				});
 				return rebundle();
+			},
+			images: function (env) {
+				return $.watch(config.images.watch(env, false), {base: path.join(config.dirs.app), name: 'images'})
+					.pipe(gulp.dest(config.images.dst(env, false)))
+					.pipe($.debug({title: 'Reloading:'}))
+					.pipe(browserSync.stream())
 			}
 		}
 	};
