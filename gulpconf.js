@@ -79,18 +79,27 @@ var path = require('path'),
 						cascade: false,         // try to cascade `right` into `left` in sequences
 						side_effects: false,    // drop side-effect-free statements
 						warnings: false         // warn about potentially
+					}
+				},
+				images: {
+					imagemin: {
+						progressive: true,
+						interlaced: true,
+						optimizationLevel: 3,
+						svgoPlugins: [{cleanupAttrs: true}]
 					},
-					images: {
-						mozjpeg: {
-							quality: 90,        // Compression quality. Min and max are numbers in range 0 (worst) to 100 (perfect)
-							fastcrush: false,   // Disable progressive scan optimization
-							progressive: true   // Creates baseline JPEG file if disabled
-						},
-						jpegoptim: {},
-						zopflipng: {
-							'8bit': false,      // Convert 16-bit per channel image to 8-bit per channel
-							more: false         // Compress more using more iterations (depending on file size)
-						}
+					mozjpeg: {
+						quality: 90,        // Compression quality. Min and max are numbers in range 0 (worst) to 100 (perfect)
+						fastcrush: false,   // Disable progressive scan optimization
+						progressive: true   // Creates baseline JPEG file if disabled
+					},
+					jpegoptim: {
+						progressive: true,  // Lossless conversion to progressive.
+						max: 90             // Compression quality. Min and max are numbers in range 0 (worst) to 100 (perfect)
+					},
+					zopflipng: {
+						'8bit': false,      // Convert 16-bit per channel image to 8-bit per channel
+						more: false         // Compress more using more iterations (depending on file size)
 					}
 				}
 			},
@@ -99,7 +108,7 @@ var path = require('path'),
 					includePaths: [],       // An array of paths that libsass can look in to attempt to resolve your @import declarations.
 					linefeed: 'lf',         // Used to determine whether to use cr, crlf, lf or lfcr sequence for line break.
 					precision: 5,           // Used to determine how many digits after the decimal will be allowed.
-					outputStyle: 'nested'   // Determines the output format of the final CSS style. (nested, expanded, compact, compressed)
+					outputStyle: 'expanded'   // Determines the output format of the final CSS style. (nested, expanded, compact, compressed)
 				},
 				autoprefix: {
 					browsers: [
@@ -190,6 +199,35 @@ var path = require('path'),
 			},
 			actions: function (check) {
 				var enabled = ['min', 'gzip', 'version'];
+				if (typeof check === 'undefined') {
+					return enabled;
+				} else {
+					return enabled.indexOf(check) > -1;
+				}
+			}
+		},
+		images: {
+			src: function (env, isSprite) {
+				return isSprite ? [
+					 path.join(dirs.images, 'sprites', '**', '*')
+				] : [
+					path.join(dirs.images, '**', '*'),
+					'!' + path.join(dirs.images, 'sprites', '**', '*')
+				]
+			},
+			dst: function (env, isSprite) {
+				return isSprite ? path.join(dirs.build, 'images', 'sprites') : path.join(dirs.build, 'images');
+			},
+			watch: function (env, isSprite) {
+				return isSprite ? [
+					path.join(dirs.images, 'sprites', '**', '*')
+				] : [
+					path.join(dirs.images, '**', '*'),
+					'!' + path.join(dirs.images, 'sprites', '**', '*')
+				]
+			},
+			actions: function (check) {
+				var enabled = ['min', 'zopflipng'];
 				if (typeof check === 'undefined') {
 					return enabled;
 				} else {

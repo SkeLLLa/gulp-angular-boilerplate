@@ -61,6 +61,10 @@ var browserSync = require('browser-sync'),
 						gulp.dest(config.scss.dst(env))
 					));
 			},
+			sprites: function (env) {
+				//TODO: generate sprites with spritesmith
+				//TODO: minify sprite using imagemin, @see task for images for sample code
+			},
 			js: function (env) {
 				var taskType = 'js';
 				return browserify({
@@ -87,6 +91,27 @@ var browserSync = require('browser-sync'),
 						$.zopfli(config.modules.gzip)))
 					.pipe($.if(env.type === config.env.type.PRODUCTION && isTaskEnabled(taskType, 'gzip'),
 						gulp.dest(config.js.dst(env))));
+			},
+			images: function (env) {
+				var taskType = 'images',
+					plugins = [],
+					imageminOptions = config.modules.min.images.imagemin;
+				if (isTaskEnabled(taskType, 'zopflipng')) {
+					plugins.push(require('imagemin-zopfli')(modules.min.images.zopflipng));
+				}
+				if (isTaskEnabled(taskType, 'mozjpeg')) {
+					plugins.push(require('imagemin-mozjpeg')(modules.min.images.mozjpeg));
+				}
+				if (isTaskEnabled(taskType, 'zopflipng')) {
+					plugins.push(require('imagemin-jpegoptim')(modules.min.images.jpegoptim));
+				}
+				imageminOptions.plugins = plugins;
+				return gulp.src(config.images.src(env, false), {base: path.join(config.dirs.app)})
+					.pipe($.if(env.type === config.env.type.PRODUCTION && isTaskEnabled(taskType, 'min'),
+						$.imagemin(imageminOptions)
+					))
+					.pipe(gulp.dest(config.images.dst(env, false)));
+
 			}
 		},
 		watch: {
