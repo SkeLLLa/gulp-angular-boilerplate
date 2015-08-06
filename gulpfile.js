@@ -135,34 +135,9 @@ var browserSync = require('browser-sync'),
 							.pipe(browserSync.reload({stream: true, once: true}));
 					};
 				bundler.on('update', function () {rebundle()}).on('time', function (time) {
-					$.util.log('Rebundle', $.util.colors.cyan('\'js\''), 'in', $.util.colors.magenta((time / 1000) + ' s'));
+					$.util.log('Rebundle', $.util.colors.cyan('\'js\''), 'in', $.util.colors.magenta(Math.round(time / 10) / 100 + ' s'));
 				});
 				return rebundle();
-				/*bundler.on('update', function () {
-					bundler
-						.transform(debowerify)
-						.transform(ngAnnotate)
-						.transform('brfs')
-						.transform('bulkify')
-						.bundle()
-						.pipe(source('main.js'))
-						.pipe(buffer())
-						.pipe($.if(isTaskEnabled(taskType, 'version'),
-							$.replace('@@version@@', pJson.version)))
-						.pipe(browserSync.reload({stream: true, once: true}));
-				});
-
-				return b
-					.transform(debowerify)
-					.transform(ngAnnotate)
-					.transform('brfs')
-					.transform('bulkify')
-					.bundle()
-					.pipe(source('main.js'))
-					.pipe(buffer())
-					.pipe($.if(isTaskEnabled(taskType, 'version'),
-						$.replace('@@version@@', pJson.version)))
-					.pipe(browserSync.reload({stream: true, once: true}));*/
 			}
 		}
 	};
