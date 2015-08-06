@@ -1,0 +1,25 @@
+//
+// Sprite generation options
+//
+//$sprite-spacing: 10px;
+//$sprite-layout: smart;
+
+//
+// Compass components
+//
+//@import 'compass';
+//@import 'compass/reset';
+//@import 'compass/utilities/sprites';
+
+//
+// Sprites import
+//
+//@import 'sprite/*.png';
+
+//@import 'mixins/sprite';
+
+@import "example";
+
+.hidden {
+  display: none;
+}

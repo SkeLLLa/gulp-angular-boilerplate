@@ -1,0 +1,28 @@
+<!doctype html>
+<html class="no-js">
+<head>
+	<base href="/">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title ng-bind="pageTitle"></title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width">
+
+	<link rel="stylesheet" href="/css/style.css?v=@@version@@">
+</head>
+<body>
+<!-- @if type='prod' -->
+<div>You're runnning production build</div>
+<!-- @endif -->
+<!-- @if type='dev' -->
+<div>You're runnning development build</div>
+<!-- @endif -->
+<!-- @ifdef debug -->
+<div>Debugging enabled!asd</div>
+<!-- @endif -->
+<div ui-view></div>
+
+
+<script src="/js/main.js?v=@@version@@"></script>
+</body>
+</html>
