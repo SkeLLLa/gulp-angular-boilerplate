@@ -77,6 +77,7 @@ var browserSync = require('browser-sync'),
 					.bundle()
 					.pipe(source('main.js'))
 					.pipe(buffer())
+					.pipe($.debug())
 					.pipe($.if(isTaskEnabled(taskType, 'version'),
 						$.replace('@@version@@', pJson.version)))
 					.pipe($.if(env.type === config.env.type.PRODUCTION && isTaskEnabled(taskType, 'min'),
@@ -90,7 +91,7 @@ var browserSync = require('browser-sync'),
 		},
 		watch: {
 			html: function (env) {
-				return $.watch(config.html.src(env), {name: 'html', base: config.dirs.app})
+				return $.watch(config.html.watch(env), {name: 'html', base: config.dirs.app})
 					.pipe($.tap(function (file) {
 						var src;
 						if (/^_\w+/.test(path.basename(file.path))) {
@@ -109,6 +110,59 @@ var browserSync = require('browser-sync'),
 							.pipe($.debug({title: 'Reloading:'}))
 							.pipe(browserSync.reload({stream: true}));
 					}));
+			},
+			js: function (env) {
+				var taskType = 'js',
+					b = browserify({
+						entries: config.js.watch(env),
+						cache: {},
+						packageCache: {},
+						fullPaths: true
+					}, watchify.args),
+					bundler = watchify(b),
+					rebundle = function () {
+						return bundler
+							.transform(debowerify)
+							.transform(ngAnnotate)
+							.transform('brfs')
+							.transform('bulkify')
+							.bundle().on('error', $.util.log)
+							.pipe(source('main.js'))
+							.pipe(buffer())
+							.pipe($.if(isTaskEnabled(taskType, 'version'),
+								$.replace('@@version@@', pJson.version)))
+							.pipe(gulp.dest(config.js.dst(env)))
+							.pipe(browserSync.reload({stream: true, once: true}));
+					};
+				bundler.on('update', function () {rebundle()}).on('time', function (time) {
+					$.util.log('Rebundle', $.util.colors.cyan('\'js\''), 'in', $.util.colors.magenta((time / 1000) + ' s'));
+				});
+				return rebundle();
+				/*bundler.on('update', function () {
+					bundler
+						.transform(debowerify)
+						.transform(ngAnnotate)
+						.transform('brfs')
+						.transform('bulkify')
+						.bundle()
+						.pipe(source('main.js'))
+						.pipe(buffer())
+						.pipe($.if(isTaskEnabled(taskType, 'version'),
+							$.replace('@@version@@', pJson.version)))
+						.pipe(browserSync.reload({stream: true, once: true}));
+				});
+
+				return b
+					.transform(debowerify)
+					.transform(ngAnnotate)
+					.transform('brfs')
+					.transform('bulkify')
+					.bundle()
+					.pipe(source('main.js'))
+					.pipe(buffer())
+					.pipe($.if(isTaskEnabled(taskType, 'version'),
+						$.replace('@@version@@', pJson.version)))
+					.pipe(browserSync.reload({stream: true, once: true}));*/
 			}
 		}
 	};
@@ -136,6 +190,10 @@ gulp.task('_watch:scss', function () {
 
 gulp.task('_build:js', function () {
 	return tasks.build.js(activeEnv);
+});
+
+gulp.task('_watch:js', function () {
+	return tasks.watch.js(activeEnv);
 });
 
 gulp.task('_watch:all', ['_watch:html'], function() {});

@@ -179,18 +179,14 @@ var path = require('path'),
 			}
 		},
 		js: {
-			src: function (env, vendor) {
-				if (vendor) {
-					return [path.join(dirs.js, 'vendor', '**', '*.js')];
-				} else {
-					return [path.join(dirs.js, 'main.js')]
-				}
+			src: function (env) {
+				return [path.join(dirs.js, 'main.js')]
 			},
 			dst: function () {
 				return path.join(dirs.build, 'js');
 			},
 			watch: function () {
-				return [path.join(dirs.js, '**', '*.js')];
+				return [path.join(dirs.js, 'main.js')]
 			},
 			actions: function (check) {
 				var enabled = ['min', 'gzip', 'version'];
