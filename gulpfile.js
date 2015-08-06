@@ -16,6 +16,8 @@ var browserSync = require('browser-sync'),
 	config = require('./gulpconf'),
 	del = require('del'),
 	path = require('path'),
+	debowerify = require('debowerify'),
+	ngAnnotate = require('browserify-ngannotate'),
 	activeEnv = {                 //Default active environment
 		type: 'prod',
 		debug: true
@@ -58,6 +60,32 @@ var browserSync = require('browser-sync'),
 					.pipe($.if(env.type === config.env.type.PRODUCTION && isTaskEnabled('gzip', taskType),
 						gulp.dest(config.scss.dst(env))
 					));
+			},
+			js: function (env) {
+				var taskType = 'js';
+				return browserify({
+					entries: config.js.src(env),
+					debug: true,
+					cache: {},
+					packageCache: {},
+					fullPaths: true
+				})
+					.transform(debowerify)
+					.transform(ngAnnotate)
+					.transform('brfs')
+					.transform('bulkify')
+					.bundle()
+					.pipe(source('main.js'))
+					.pipe(buffer())
+					.pipe($.if(isTaskEnabled(taskType, 'version'),
+						$.replace('@@version@@', pJson.version)))
+					.pipe($.if(env.type === config.env.type.PRODUCTION && isTaskEnabled(taskType, 'min'),
+						$.streamify($.uglify(config.modules.min.js).on('error', $.util.log))))
+					.pipe(gulp.dest(config.js.dst(env)))
+					.pipe($.if(env.type === config.env.type.PRODUCTION && isTaskEnabled(taskType, 'gzip'),
+						$.zopfli(config.modules.gzip)))
+					.pipe($.if(env.type === config.env.type.PRODUCTION && isTaskEnabled(taskType, 'gzip'),
+						gulp.dest(config.js.dst(env))));
 			}
 		},
 		watch: {
@@ -85,9 +113,10 @@ var browserSync = require('browser-sync'),
 		}
 	};
 
-gulp.task('test:dev', function () {
+gulp.task('test:dev', function (cb) {
 	activeEnv.type = 'dev';
-	gulp.start('_watch:all');
+	runSequence('_build:js', cb);
+	//gulp.start('_build:js');
 });
 
 gulp.task('_build:html', function () {
@@ -99,6 +128,14 @@ gulp.task('_watch:html', ['_build:html'], function () {
 
 gulp.task('_build:scss', function () {
 	return tasks.build.scss(activeEnv);
+});
+
+gulp.task('_watch:scss', function () {
+	//return tasks.build.scss(activeEnv);
+});
+
+gulp.task('_build:js', function () {
+	return tasks.build.js(activeEnv);
 });
 
 gulp.task('_watch:all', ['_watch:html'], function() {});

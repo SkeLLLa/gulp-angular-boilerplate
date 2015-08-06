@@ -4,6 +4,7 @@ var angular = require('angular');
 
 // angular modules
 require('angular-ui-router');
+require('hello-world');
 require('./controllers/_index');
 require('./services/_index');
 require('./directives/_index');

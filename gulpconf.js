@@ -177,6 +177,29 @@ var path = require('path'),
 					return enabled.indexOf(check) > -1;
 				}
 			}
+		},
+		js: {
+			src: function (env, vendor) {
+				if (vendor) {
+					return [path.join(dirs.js, 'vendor', '**', '*.js')];
+				} else {
+					return [path.join(dirs.js, 'main.js')]
+				}
+			},
+			dst: function () {
+				return path.join(dirs.build, 'js');
+			},
+			watch: function () {
+				return [path.join(dirs.js, '**', '*.js')];
+			},
+			actions: function (check) {
+				var enabled = ['min', 'gzip', 'version'];
+				if (typeof check === 'undefined') {
+					return enabled;
+				} else {
+					return enabled.indexOf(check) > -1;
+				}
+			}
 		}
 	};
 
