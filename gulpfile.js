@@ -46,7 +46,7 @@ var browserSync = require('browser-sync'),
 			scss: function (env) {
 				var taskType = 'scss';
 				return gulp.src(config.scss.src(env), {base: path.join(config.dirs.app, 'scss')})
-					.pipe($.sass(config.modules.compile.scss))
+					.pipe($.sass(config.modules.compile.scss).on('error', $.sass.logError))
 					.pipe($.if(isTaskEnabled('autoprefix', taskType),
 						$.autoprefixer(config.modules.compile.autoprefix)
 					))
