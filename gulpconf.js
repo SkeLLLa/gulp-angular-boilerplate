@@ -15,6 +15,8 @@ var path = require('path'),
 		result.app = path.join(result.src, 'app');
 		result.views = path.join(result.app, 'views');
 		result.js = path.join(result.app, 'js');
+		result.images = path.join(result.app, 'images');
+		result.sprites = path.join(result.app, 'images', 'sprites');
 		result.vendor = {
 			js: path.join(result.app, 'vendor', 'js'),
 			css: path.join(result.app, 'vendor', 'css')

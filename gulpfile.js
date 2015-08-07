@@ -97,13 +97,13 @@ var browserSync = require('browser-sync'),
 					plugins = [],
 					imageminOptions = config.modules.min.images.imagemin;
 				if (isTaskEnabled(taskType, 'zopflipng')) {
-					plugins.push(require('imagemin-zopfli')(modules.min.images.zopflipng));
+					plugins.push(require('imagemin-zopfli')(config.modules.min.images.zopflipng));
 				}
 				if (isTaskEnabled(taskType, 'mozjpeg')) {
-					plugins.push(require('imagemin-mozjpeg')(modules.min.images.mozjpeg));
+					plugins.push(require('imagemin-mozjpeg')(config.modules.min.images.mozjpeg));
 				}
 				if (isTaskEnabled(taskType, 'zopflipng')) {
-					plugins.push(require('imagemin-jpegoptim')(modules.min.images.jpegoptim));
+					plugins.push(require('imagemin-jpegoptim')(config.modules.min.images.jpegoptim));
 				}
 				imageminOptions.plugins = plugins;
 				return gulp.src(config.images.src(env, false), {base: path.join(config.dirs.app)})
@@ -200,6 +200,14 @@ gulp.task('_build:js', function () {
 
 gulp.task('_watch:js', function () {
 	return tasks.watch.js(activeEnv);
+});
+
+gulp.task('_build:images', function () {
+	return tasks.build.images(activeEnv);
+});
+
+gulp.task('_watch:images', function () {
+	return tasks.watch.images(activeEnv);
 });
 
 gulp.task('_watch:all', ['_watch:html'], function() {});
