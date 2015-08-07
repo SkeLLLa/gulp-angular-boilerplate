@@ -62,8 +62,28 @@ var browserSync = require('browser-sync'),
 					));
 			},
 			sprites: function (env) {
-				//TODO: generate sprites with spritesmith
-				//TODO: minify sprite using imagemin, @see task for images for sample code
+				var taskType = 'images',
+					plugins = [],
+					imageminOptions = config.modules.min.images.imagemin;
+				if (isTaskEnabled(taskType, 'zopflipng')) {
+					plugins.push(require('imagemin-zopfli')(config.modules.min.images.zopflipng));
+				}
+				if (isTaskEnabled(taskType, 'zopflipng')) {
+					plugins.push(require('imagemin-jpegoptim')(config.modules.min.images.jpegoptim));
+				}
+				imageminOptions.plugins = plugins;
+
+				var spriteData =
+					gulp.src(config.images.src(env, true))
+						.pipe($.spritesmith(config.modules.min.images.spritesmith));
+
+				spriteData.img
+					.pipe($.if(env.type === config.env.type.PRODUCTION && isTaskEnabled(taskType, 'min'),
+						$.imagemin(imageminOptions)
+					))
+					.pipe(gulp.dest(path.join(config.dirs.build,'images','sprites')));
+
+				spriteData.css.pipe(gulp.dest(path.join(config.dirs.scss,'modules')));
 			},
 			js: function (env) {
 				var taskType = 'js';
@@ -208,6 +228,14 @@ gulp.task('_build:images', function () {
 
 gulp.task('_watch:images', function () {
 	return tasks.watch.images(activeEnv);
+});
+
+gulp.task('_build:sprites', function () {
+	return tasks.build.sprites(activeEnv);
+});
+
+gulp.task('_watch:sprites', function () {
+	return tasks.watch.sprites(activeEnv);
 });
 
 gulp.task('_watch:all', ['_watch:html'], function() {});

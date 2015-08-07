@@ -1,20 +1,18 @@
 .example {
   .gulp {
-    display: block;
-    width: sprite-sprite-width(gulp);
-    height: sprite-sprite-height(gulp);
-    @include sprite-sprite(gulp);
+    //width: $gulp-width;
+    @include sprite($gulp);
   }
-  .angular {
-    display: block;
-    width: sprite-sprite-width(angular);
-    height: sprite-sprite-height(angular);
-    @include sprite-sprite(angular);
-  }
-  .browserify {
-    display: block;
-    width: sprite-sprite-width(browserify);
-    height: sprite-sprite-height(browserify);
-    @include sprite-sprite(browserify);
-  }
+  //.angular {
+  //  display: block;
+  //  width: sprite-sprite-width(angular);
+  //  height: sprite-sprite-height(angular);
+  //  @include sprite-sprite(angular);
+  //}
+  //.browserify {
+  //  display: block;
+  //  width: sprite-sprite-width(browserify);
+  //  height: sprite-sprite-height(browserify);
+  //  @include sprite-sprite(browserify);
+  //}
 }

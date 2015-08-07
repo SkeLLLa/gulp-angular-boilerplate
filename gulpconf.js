@@ -102,6 +102,13 @@ var path = require('path'),
 					zopflipng: {
 						'8bit': false,      // Convert 16-bit per channel image to 8-bit per channel
 						more: false         // Compress more using more iterations (depending on file size)
+					},
+					spritesmith:{
+						imgName: 'sprite.png',
+						imgPath: '../images/sprites/sprite.png',
+						cssName: '_sprite.scss',
+						padding:50,
+						algorithm :'top-down'
 					}
 				}
 			},
@@ -211,7 +218,7 @@ var path = require('path'),
 		images: {
 			src: function (env, isSprite) {
 				return isSprite ? [
-					 path.join(dirs.images, 'sprites', '**', '*')
+					 path.join(dirs.images, 'sprites', '**', '*.png')
 				] : [
 					path.join(dirs.images, '**', '*'),
 					'!' + path.join(dirs.images, 'sprites', '**', '*')
@@ -222,7 +229,7 @@ var path = require('path'),
 			},
 			watch: function (env, isSprite) {
 				return isSprite ? [
-					path.join(dirs.images, 'sprites', '**', '*')
+					path.join(dirs.images, 'sprites', '**', '*.png')
 				] : [
 					path.join(dirs.images, '**', '*'),
 					'!' + path.join(dirs.images, 'sprites', '**', '*')
