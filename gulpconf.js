@@ -114,7 +114,9 @@ var path = require('path'),
 			},
 			compile: {
 				scss: {
-					includePaths: [],       // An array of paths that libsass can look in to attempt to resolve your @import declarations.
+					includePaths: [
+						require('node-normalize-scss').includePaths
+					],       // An array of paths that libsass can look in to attempt to resolve your @import declarations.
 					linefeed: 'lf',         // Used to determine whether to use cr, crlf, lf or lfcr sequence for line break.
 					precision: 5,           // Used to determine how many digits after the decimal will be allowed.
 					outputStyle: 'expanded'   // Determines the output format of the final CSS style. (nested, expanded, compact, compressed)
@@ -242,6 +244,25 @@ var path = require('path'),
 				} else {
 					return enabled.indexOf(check) > -1;
 				}
+			}
+		},
+		misc: {
+			src: function (env) {
+				var res = [];
+				copy.forEach(function (ext) {
+					res.push(path.join(dirs.src, '**', ext))
+				});
+				return res;
+			},
+			dst: function (env) {
+				return dirs.build;
+			},
+			watch: function (env) {
+				var res = [];
+				copy.forEach(function (ext) {
+					res.push(path.join(dirs.src, '**', ext))
+				});
+				return res;
 			}
 		}
 	};

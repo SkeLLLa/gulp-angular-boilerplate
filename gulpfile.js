@@ -46,7 +46,7 @@ var browserSync = require('browser-sync'),
 			scss: function (env) {
 				var taskType = 'scss';
 				return gulp.src(config.scss.src(env), {base: path.join(config.dirs.app, 'scss')})
-					.pipe($.sass(config.modules.compile.scss))
+					.pipe($.sass(config.modules.compile.scss).on('error', $.sass.logError))
 					.pipe($.if(isTaskEnabled('autoprefix', taskType),
 						$.autoprefixer(config.modules.compile.autoprefix)
 					))
@@ -62,28 +62,8 @@ var browserSync = require('browser-sync'),
 					));
 			},
 			sprites: function (env) {
-				var taskType = 'images',
-					plugins = [],
-					imageminOptions = config.modules.min.images.imagemin;
-				if (isTaskEnabled(taskType, 'zopflipng')) {
-					plugins.push(require('imagemin-zopfli')(config.modules.min.images.zopflipng));
-				}
-				if (isTaskEnabled(taskType, 'zopflipng')) {
-					plugins.push(require('imagemin-jpegoptim')(config.modules.min.images.jpegoptim));
-				}
-				imageminOptions.plugins = plugins;
-
-				var spriteData =
-					gulp.src(config.images.src(env, true))
-						.pipe($.spritesmith(config.modules.min.images.spritesmith));
-
-				spriteData.img
-					.pipe($.if(env.type === config.env.type.PRODUCTION && isTaskEnabled(taskType, 'min'),
-						$.imagemin(imageminOptions)
-					))
-					.pipe(gulp.dest(path.join(config.dirs.build,'images','sprites')));
-
-				spriteData.css.pipe(gulp.dest(path.join(config.dirs.scss,'modules')));
+				//TODO: generate sprites with spritesmith
+				//TODO: minify sprite using imagemin, @see task for images for sample code
 			},
 			js: function (env) {
 				var taskType = 'js';
@@ -132,7 +112,17 @@ var browserSync = require('browser-sync'),
 					))
 					.pipe(gulp.dest(config.images.dst(env, false)));
 
+			},
+			misc: function (env) {
+				return gulp.src(config.misc.src(env), {base: path.join(config.dirs.src)})
+					.pipe($.if(env.type === config.env.type.DEVELOPMENT, $.changed(config.misc.dst(env))))
+					.pipe(gulp.dest(config.misc.dst(env)));
+			},
+			clean: function (env, cb) {
+				console.log(config.dirs.dst);
+				//del(config.dirs.dst, {dot: true}, cb);
 			}
+
 		},
 		watch: {
 			html: function (env) {
@@ -189,9 +179,32 @@ var browserSync = require('browser-sync'),
 					.pipe(gulp.dest(config.images.dst(env, false)))
 					.pipe($.debug({title: 'Reloading:'}))
 					.pipe(browserSync.stream())
+			},
+			misc: function (env) {
+				return $.watch(config.misc.src(env), function () {
+					gulp.start('_misc');
+				});
 			}
 		}
 	};
+
+gulp.task('version:bump:fix', function () {               //Use this task if you fixed something
+	gulp.src(['./bower.json', './package.json'])
+		.pipe($.bump())
+		.pipe(gulp.dest('./'));
+});
+
+gulp.task('version:bump:add', function () {               //Use this task if you've added something new
+	gulp.src(['./bower.json', './package.json'])
+		.pipe($.bump({type: 'minor'}))
+		.pipe(gulp.dest('./'));
+});
+
+gulp.task('version:bump:breaking', function () {          //Use this task if you've added something not compatible with old code, api, etc.
+	gulp.src(['./bower.json', './package.json'])
+		.pipe($.bump({type: 'major'}))
+		.pipe(gulp.dest('./'));
+});
 
 gulp.task('test:dev', function (cb) {
 	activeEnv.type = 'dev';
@@ -230,12 +243,12 @@ gulp.task('_watch:images', function () {
 	return tasks.watch.images(activeEnv);
 });
 
-gulp.task('_build:sprites', function () {
-	return tasks.build.sprites(activeEnv);
+gulp.task('_build:misc', function () {
+	return tasks.build.misc(activeEnv);
 });
 
-gulp.task('_watch:sprites', function () {
-	return tasks.watch.sprites(activeEnv);
+gulp.task('_watch:misc', function () {
+	return tasks.watch.misc(activeEnv);
 });
 
 gulp.task('_watch:all', ['_watch:html'], function() {});

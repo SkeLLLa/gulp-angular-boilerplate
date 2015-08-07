@@ -1,6 +1,6 @@
 {
   "name": "faxngo",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Faxngo websote",
   "private": true,
   "engines": {
@@ -48,7 +48,8 @@
     "gulp-useref": "^1.2.0",
     "gulp-util": "^3.0.6",
     "gulp-zopfli": "^1.0.0",
-    "gulp.spritesmith": "~4.0.0",
+    "gulp.spritesmith": "^4.0.0",
+    "node-normalize-scss": "^1.0.3",
     "run-sequence": "^1.1.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
