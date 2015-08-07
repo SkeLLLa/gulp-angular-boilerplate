@@ -173,6 +173,24 @@ var browserSync = require('browser-sync'),
 		}
 	};
 
+gulp.task('version:bump:fix', function () {               //Use this task if you fixed something
+	gulp.src(['./bower.json', './package.json'])
+		.pipe($.bump())
+		.pipe(gulp.dest('./'));
+});
+
+gulp.task('version:bump:add', function () {               //Use this task if you've added something new
+	gulp.src(['./bower.json', './package.json'])
+		.pipe($.bump({type: 'minor'}))
+		.pipe(gulp.dest('./'));
+});
+
+gulp.task('version:bump:breaking', function () {          //Use this task if you've added something not compatible with old code, api, etc.
+	gulp.src(['./bower.json', './package.json'])
+		.pipe($.bump({type: 'major'}))
+		.pipe(gulp.dest('./'));
+});
+
 gulp.task('test:dev', function (cb) {
 	activeEnv.type = 'dev';
 	runSequence('_build:js', cb);
