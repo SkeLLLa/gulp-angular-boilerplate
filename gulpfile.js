@@ -112,7 +112,17 @@ var browserSync = require('browser-sync'),
 					))
 					.pipe(gulp.dest(config.images.dst(env, false)));
 
+			},
+			misc: function (env) {
+				return gulp.src(config.misc.src(env), {base: path.join(config.dirs.src)})
+					.pipe($.if(env.type === config.env.type.DEVELOPMENT, $.changed(config.misc.dst(env))))
+					.pipe(gulp.dest(config.misc.dst(env)));
+			},
+			clean: function (env, cb) {
+				console.log(config.dirs.dst);
+				//del(config.dirs.dst, {dot: true}, cb);
 			}
+
 		},
 		watch: {
 			html: function (env) {
@@ -169,6 +179,11 @@ var browserSync = require('browser-sync'),
 					.pipe(gulp.dest(config.images.dst(env, false)))
 					.pipe($.debug({title: 'Reloading:'}))
 					.pipe(browserSync.stream())
+			},
+			misc: function (env) {
+				return $.watch(config.misc.src(env), function () {
+					gulp.start('_misc');
+				});
 			}
 		}
 	};
@@ -226,6 +241,14 @@ gulp.task('_build:images', function () {
 
 gulp.task('_watch:images', function () {
 	return tasks.watch.images(activeEnv);
+});
+
+gulp.task('_build:misc', function () {
+	return tasks.build.misc(activeEnv);
+});
+
+gulp.task('_watch:misc', function () {
+	return tasks.watch.misc(activeEnv);
 });
 
 gulp.task('_watch:all', ['_watch:html'], function() {});

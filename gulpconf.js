@@ -238,6 +238,25 @@ var path = require('path'),
 					return enabled.indexOf(check) > -1;
 				}
 			}
+		},
+		misc: {
+			src: function (env) {
+				var res = [];
+				copy.forEach(function (ext) {
+					res.push(path.join(dirs.src, '**', ext))
+				});
+				return res;
+			},
+			dst: function (env) {
+				return dirs.build;
+			},
+			watch: function (env) {
+				var res = [];
+				copy.forEach(function (ext) {
+					res.push(path.join(dirs.src, '**', ext))
+				});
+				return res;
+			}
 		}
 	};
 
