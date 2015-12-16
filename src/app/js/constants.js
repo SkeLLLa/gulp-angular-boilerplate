@@ -13,3 +13,4 @@ var AppSettings = {
 };
 
 module.exports = AppSettings;
+

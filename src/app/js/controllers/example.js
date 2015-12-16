@@ -12,6 +12,7 @@ function ExampleCtrl() {
 
 	self.title = 'AngularJS, Gulp, and Browserify!';
 	self.number = 1234657;
+	console.log('Controller');
 	/*self.alert = function() {
 	 console.log(1)
 	 };*/

@@ -54,6 +54,7 @@
 	"excludeFiles": [
 		"build/**",
 		"node_modules/**",
-		"src/app/lib/**"
+		"src/app/lib/**",
+		"vendor/**"
 	]
 }

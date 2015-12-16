@@ -4,12 +4,14 @@
 'use strict';
 var path = require('path'),
 	modRewrite = require('connect-modrewrite'),
+		bowerFiles = require('main-bower-files'),
 	dirs = (function () {
 		var workDir = __dirname,
 			result = {
 				work: workDir,
 				tmp: path.join(workDir, '.tmp'),
 				src: path.join(workDir, 'src'),
+				bower: path.join(workDir, 'vendor'),
 				build: path.join(workDir, 'build')
 			};
 		result.app = path.join(result.src, 'app');
@@ -24,7 +26,7 @@ var path = require('path'),
 		result.scss = path.join(result.app, 'scss');
 		return result;
 	})(),
-	copy = ['*.exe', '*.php', '*.ico', '*.html', 'favicon*.*'],
+	copy = ['*.exe', '*.php', '*.ico', 'favicon*.*'],
 	config = {
 		dirs: dirs,
 		server: {
@@ -102,17 +104,17 @@ var path = require('path'),
 					zopflipng: {
 						'8bit': false,      // Convert 16-bit per channel image to 8-bit per channel
 						more: false         // Compress more using more iterations (depending on file size)
-					},
-					spritesmith:{
-						imgName: 'sprite.png',
-						imgPath: '../images/sprites/sprite.png',
-						cssName: '_sprite.scss',
-						padding:50,
-						algorithm :'top-down'
 					}
 				}
 			},
 			compile: {
+				spritesmith: {
+					imgName: 'sprite.png',
+					imgPath: path.relative(dirs.scss, path.join(dirs.sprites, 'sprite.png')),
+					cssName: '_sprite.scss',
+					padding: 50,
+					algorithm: 'top-down'
+				},
 				scss: {
 					includePaths: [
 						require('node-normalize-scss').includePaths
@@ -139,8 +141,8 @@ var path = require('path'),
 		},
 		env: {
 			type: {
-				DEVELOPMENT: 'dev',
-				PRODUCTION: 'prod'
+				DEVELOPMENT: 'development',
+				PRODUCTION: 'production'
 			},
 			debug: {
 				ENABLED: true,
@@ -175,11 +177,18 @@ var path = require('path'),
 			}
 		},
 		scss: {
-			src: function () {
-				return [
-					path.join(dirs.scss, '**', '*.scss'),
-					'!' + path.join(dirs.scss, '**', '_*.scss')
-				];
+			src: function (env, listAll) {
+				if (!listAll) {
+					return [
+						path.join(dirs.scss, '**', '*.scss'),
+						'!' + path.join(dirs.scss, '**', '_*.scss')
+					];
+				} else {
+					return [
+						path.join(dirs.scss, '**', '*.scss'),
+						'!' + path.join(dirs.scss, 'sprites', '**', '*.scss')
+					];
+				}
 			},
 			dst: function () {
 				return path.join(dirs.build, 'css');
@@ -199,11 +208,19 @@ var path = require('path'),
 			}
 		},
 		js: {
-			src: function (env) {
-				return [path.join(dirs.js, 'main.js')]
+			src: function (env, listAll) {
+				if (!listAll) {
+					return [path.join(dirs.js, 'main.js')]
+				} else {
+					return [path.join(dirs.js, '**', '*.js')]
+				}
 			},
-			dst: function () {
-				return path.join(dirs.build, 'js');
+			dst: function (env, lintDst) {
+				if (!lintDst) {
+					return path.join(dirs.build, 'js');
+				} else {
+					return dirs.js;
+				}
 			},
 			watch: function () {
 				return [path.join(dirs.js, 'main.js')]
@@ -222,7 +239,7 @@ var path = require('path'),
 				return isSprite ? [
 					 path.join(dirs.images, 'sprites', '**', '*.png')
 				] : [
-					path.join(dirs.images, '**', '*'),
+					path.join(dirs.images, '**', '*.{png,jpg,gif,svg}'),
 					'!' + path.join(dirs.images, 'sprites', '**', '*')
 				]
 			},
@@ -239,6 +256,26 @@ var path = require('path'),
 			},
 			actions: function (check) {
 				var enabled = ['min', 'zopflipng'];
+				if (typeof check === 'undefined') {
+					return enabled;
+				} else {
+					return enabled.indexOf(check) > -1;
+				}
+			}
+		},
+		fonts: {
+			src: function (env) {
+				return bowerFiles(['**/*.woff2', '**/*.woff', '**/*.svg', '**/*.eot', '**/*.ttf']);
+				//return path.join(dirs.bower, '**', '*.{woff,woff2,svg,eot}')
+			},
+			dst: function () {
+				return path.join(dirs.build, 'font');
+			},
+			watch: function () {
+				return bowerFiles(['**/*.woff2', '**/*.woff'])
+			},
+			actions: function (check) {
+				var enabled = ['gzip'];
 				if (typeof check === 'undefined') {
 					return enabled;
 				} else {

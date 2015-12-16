@@ -3,16 +3,12 @@
     //width: $gulp-width;
     @include sprite($gulp);
   }
-  //.angular {
-  //  display: block;
-  //  width: sprite-sprite-width(angular);
-  //  height: sprite-sprite-height(angular);
-  //  @include sprite-sprite(angular);
-  //}
-  //.browserify {
-  //  display: block;
-  //  width: sprite-sprite-width(browserify);
-  //  height: sprite-sprite-height(browserify);
-  //  @include sprite-sprite(browserify);
-  //}
+
+  .angular {
+    @include sprite($browserify);
+  }
+
+  .browserify {
+    @include sprite($angular);
+  }
 }

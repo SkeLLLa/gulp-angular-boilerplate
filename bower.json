@@ -10,6 +10,9 @@
     "tests"
   ],
   "dependencies": {
-    "hello-world": "*"
+    "hello-world": "*",
+    "angular": "~1.4.8",
+    "angular-ui-router": "~0.2.15",
+    "Materialize": "materialize#~0.97.3"
   }
 }
