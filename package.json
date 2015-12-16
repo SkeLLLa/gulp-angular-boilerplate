@@ -1,7 +1,7 @@
 {
-  "name": "angular-bp",
+  "name": "gulp-angular-boilerplate",
   "version": "1.0.0",
-  "description": "Angular boilerplate",
+  "description": "Angular boilerplate with gulp and browserify",
   "private": true,
   "engines": {
     "node": ">=0.10.26"
@@ -80,6 +80,7 @@
     "pre-build": "npm install",
     "build": "GULP_ENV=production GULP_DEBUG=false gulp build",
     "build:prod": "GULP_ENV=production GULP_DEBUG=false gulp build",
-    "build:dev": "GULP_ENV=production GULP_DEBUG=false gulp build"
+    "build:dev": "GULP_ENV=development GULP_DEBUG=true gulp build",
+    "watch:dev": "GULP_ENV=development GULP_DEBUG=true gulp watch"
   }
 }
