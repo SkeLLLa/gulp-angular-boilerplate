@@ -56,6 +56,7 @@ var path = require('path'),
 					loose: false                // preserve one whitespace
 				},
 				css: {
+					sourceMap: false,           // do not create source maps
 					advanced: true,             // set to false to disable advanced optimizations - selector & property merging, reduction, etc.
 					compatibility: '',          // enables compatibility mode, '' - IE9+, 'ie7' - IE 7, 'ie8' - IE 8
 					keepSpecialComments: '0',   // * for keeping all (default), 1 for keeping first one only, 0 for removing all
@@ -135,6 +136,9 @@ var path = require('path'),
 						'android >= 4.1',
 						'bb >= 10'
 					]
+				},
+				combine: {
+					beautify: false
 				}
 			},
 			lint: {}
@@ -199,7 +203,7 @@ var path = require('path'),
 				];
 			},
 			actions: function (check) {
-				var enabled = ['min', 'gzip', 'autoprefix'];
+				var enabled = ['min', 'gzip', 'autoprefix', 'combine'];
 				if (typeof check === 'undefined') {
 					return enabled;
 				} else {

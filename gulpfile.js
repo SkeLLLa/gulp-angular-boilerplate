@@ -23,10 +23,9 @@ var browserSync = require('browser-sync').create(),
 
 	env = (function (env) {
 		var e = {
-			debug: Boolean(env.GULP_DEBUG),
+			debug: env.GULP_DEBUG === 'true',
 			type: env.GULP_ENV || config.env.type.DEVELOPMENT
 		};
-		console.log('Environment:\n', e);
 		return e;
 	})(process.env),
 
@@ -43,7 +42,7 @@ var browserSync = require('browser-sync').create(),
 			},
 			scss: function () {
 				return gulp.src(config.scss.src(env, true))
-						.pipe($.debug())
+					.pipe($.debug())
 					.pipe($.sassLint())
 					.pipe($.sassLint.format())
 			}
@@ -70,13 +69,16 @@ var browserSync = require('browser-sync').create(),
 				return gulp.src(config.scss.src(env), {base: path.join(config.dirs.app, 'scss')})
 					.pipe($.if(env.debug, $.sourcemaps.init()))
 					.pipe($.sass(config.modules.compile.scss).on('error', $.sass.logError))
-					.pipe($.if(env.debug, $.sourcemaps.write()))
-					.pipe($.if(isTaskEnabled('autoprefix', taskType),
+					.pipe($.if(isTaskEnabled(taskType, 'autoprefix'),
 						$.autoprefixer(config.modules.compile.autoprefix)
+					))
+					.pipe($.if(env.type === config.env.type.PRODUCTION && isTaskEnabled(taskType, 'combine'),
+						$.combineMq(config.modules.compile.combine)
 					))
 					.pipe($.if(env.type === config.env.type.PRODUCTION && isTaskEnabled(taskType, 'min'),
 						$.minifyCss(config.modules.min.css)
 					))
+					.pipe($.if(env.debug, $.sourcemaps.write()))
 					.pipe(gulp.dest(config.scss.dst(env)))
 					.pipe($.if(env.type === config.env.type.PRODUCTION && isTaskEnabled(taskType, 'gzip'),
 						$.zopfli(config.modules.gzip)
@@ -111,7 +113,6 @@ var browserSync = require('browser-sync').create(),
 					.bundle()
 					.pipe(source('main.js'))
 					.pipe(buffer())
-					.pipe($.debug())
 					.pipe($.if(isTaskEnabled(taskType, 'version'),
 						$.replace('@@version@@', pJson.version)))
 					.pipe($.if(env.type === config.env.type.PRODUCTION && isTaskEnabled(taskType, 'min'),
@@ -347,10 +348,13 @@ gulp.task('_watch:all', ['_watch:html', '_watch:js', '_watch:images', '_watch:sp
 gulp.task('_build:all', ['_build:sprite', '_build:html', '_build:js', '_build:images', '_build:scss', '_build:fonts'], function () {
 });
 
-gulp.task('clean', function (callback) {
-	del(config.dirs.build, {dot: true}, callback);
+gulp.task('clean', function () {
+	return del(config.dirs.build, {dot: true});
+});
+gulp.task('test', function (callback) {
+	callback();
 });
 gulp.task('watch', ['_browsersync', '_watch:all']);
-gulp.task('build', function(callback) {
-	runSequence('_build:all', callback);
+gulp.task('build', function (callback) {
+	runSequence('clean', '_build:all', callback);
 });
