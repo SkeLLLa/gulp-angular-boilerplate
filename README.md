@@ -22,11 +22,11 @@ A boilerplate using AngularJS, Browserify and SASS. It was built with usage of A
 1. Clone or download this repository as zip file and extract it into your folder
 2. Run npm install insde it (this will also run bower install automatically)
 3. Use either:
-3.1. gulp tasks with `GULP_ENV=(production|development) and/or GULP_DEBUG=(true|false)` 
-3.1.1. `gulp build` - to build project
-3.1.2. `gulp watch` - to start browsersync
-3.2. npm tasks:
-3.2.1. `npm run build` - equivalent to `GULP_ENV=production GULP_DEBUG=false ./node_modules/.bin/gulp build`
-3.2.2. `npm run build:dev` - equivalent to `GULP_ENV=development GULP_DEBUG=true ./node_modules/.bin/gulp build`
-3.2.3. `npm run build:prod` - equivalent to `GULP_ENV=production GULP_DEBUG=false ./node_modules/.bin/gulp build`
-3.2.4. `npm run watch:dev` - equivalent to `GULP_ENV=development GULP_DEBUG=true ./node_modules/.bin/gulp watch`
+  * gulp tasks with `GULP_ENV=(production|development) and/or GULP_DEBUG=(true|false)` 
+    - `gulp build` - to build project
+    - `gulp watch` - to start browsersync
+  * npm tasks:
+    - `npm run build` - equivalent to `GULP_ENV=production GULP_DEBUG=false ./node_modules/.bin/gulp build`
+    - `npm run build:dev` - equivalent to `GULP_ENV=development GULP_DEBUG=true ./node_modules/.bin/gulp build`
+    - `npm run build:prod` - equivalent to `GULP_ENV=production GULP_DEBUG=false ./node_modules/.bin/gulp build`
+    - `npm run watch:dev` - equivalent to `GULP_ENV=development GULP_DEBUG=true ./node_modules/.bin/gulp watch`
