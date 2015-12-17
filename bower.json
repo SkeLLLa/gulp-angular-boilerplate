@@ -1,5 +1,5 @@
 {
-  "name": "faxngo",
+  "name": "gulp-angular-boilerplate",
   "version": "1.0.0",
   "ignore": [
     "**/.*",
