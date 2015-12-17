@@ -76,11 +76,11 @@
     "angular": "angular"
   },
   "scripts": {
-    "postinstall": "bower install",
+    "postinstall": "./node_modules/.bin/bower install",
     "pre-build": "npm install",
-    "build": "GULP_ENV=production GULP_DEBUG=false gulp build",
-    "build:prod": "GULP_ENV=production GULP_DEBUG=false gulp build",
-    "build:dev": "GULP_ENV=development GULP_DEBUG=true gulp build",
-    "watch:dev": "GULP_ENV=development GULP_DEBUG=true gulp watch"
+    "build": "GULP_ENV=production GULP_DEBUG=false ./node_modules/.bin/gulp build",
+    "build:prod": "GULP_ENV=production GULP_DEBUG=false ./node_modules/.bin/gulp build",
+    "build:dev": "GULP_ENV=development GULP_DEBUG=true ./node_modules/.bin/gulp build",
+    "watch:dev": "GULP_ENV=development GULP_DEBUG=true ./node_modules/.bin/gulp watch"
   }
 }

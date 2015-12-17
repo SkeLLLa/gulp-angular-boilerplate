@@ -4,7 +4,7 @@
 'use strict';
 var path = require('path'),
 	modRewrite = require('connect-modrewrite'),
-		bowerFiles = require('main-bower-files'),
+	bowerFiles = require('main-bower-files'),
 	dirs = (function () {
 		var workDir = __dirname,
 			result = {
@@ -241,7 +241,7 @@ var path = require('path'),
 		images: {
 			src: function (env, isSprite) {
 				return isSprite ? [
-					 path.join(dirs.images, 'sprites', '**', '*.png')
+					path.join(dirs.images, 'sprites', '**', '*.png')
 				] : [
 					path.join(dirs.images, '**', '*.{png,jpg,gif,svg}'),
 					'!' + path.join(dirs.images, 'sprites', '**', '*')
